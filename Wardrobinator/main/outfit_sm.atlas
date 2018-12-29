@@ -1,0 +1,18 @@
+images {
+  image: "/assets/images/doll_tie_sm.png"
+}
+images {
+  image: "/assets/images/doll_vest_sm.png"
+}
+images {
+  image: "/assets/images/doll_pants_sm.png"
+}
+images {
+  image: "/assets/images/doll_shirt_sm.png"
+}
+images {
+  image: "/assets/images/doll_blazer_sm.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

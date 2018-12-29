@@ -1,0 +1,21 @@
+images {
+  image: "/assets/images/doll_person.png"
+}
+images {
+  image: "/assets/images/doll_blazer.png"
+}
+images {
+  image: "/assets/images/doll_pants.png"
+}
+images {
+  image: "/assets/images/doll_shirt.png"
+}
+images {
+  image: "/assets/images/doll_tie.png"
+}
+images {
+  image: "/assets/images/doll_vest.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

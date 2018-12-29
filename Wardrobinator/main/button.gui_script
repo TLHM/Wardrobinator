@@ -1,0 +1,15 @@
+function init(self)
+	msg.post(".", "acquire_input_focus") 
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("click") and action.pressed then 
+		local button = gui.get_node("button") 
+		local text = gui.get_node("text") 
+		if gui.pick_node(button, action.x, action.y) then 
+			gui.set_text(text, "HELLO!") 
+		else
+			gui.set_text(text, "CLICK ME!") 
+		end
+	end
+end

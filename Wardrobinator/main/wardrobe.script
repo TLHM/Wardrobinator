@@ -1,0 +1,201 @@
+function init(self)
+	-- holds all the data
+	self.data = { clothes = {}, outfits = {} }
+
+	self.opath = '/Users/tlhm/Documents/Projects/Wardrobinator/Wardrobinator/wardrobeOutfits.csv'
+	self.cpath = '/Users/tlhm/Documents/Projects/Wardrobinator/Wardrobinator/wardrobeClothes.csv'
+
+	self.data.clothing = loadClothes(self.cpath)
+	self.data.outfits = loadOutfits(self.opath)
+
+	self.delOutfits = {}
+end
+
+function loadClothes(filePath)
+	toReturn = {}
+	for line in io.lines(filePath) do 
+		parts = split(line, ',')
+
+		if parts[1]~='id' then
+			toReturn[tonumber(parts[1])] = {
+				id = tonumber(parts[1]),
+				type = parts[2],
+				pattern = parts[3],
+				colors = getColors(parts[4]),
+				patternVars = getpVars(parts[5]),
+				owned = parts[6]
+			}
+		end
+	end
+
+	return toReturn
+end
+
+function loadOutfits(filePath)
+	toReturn = {}
+	for line in io.lines(filePath) do 
+		parts = split(line, ',')
+		if parts[1]~='pants' then
+			table.insert(toReturn,{
+				pants = tonumber(parts[1]),
+				shirt = tonumber(parts[2]),
+				tie = tonumber(parts[3]),
+				vest = tonumber(parts[4]),
+				blazer = tonumber(parts[5])
+			})
+		end
+	end
+
+	return toReturn
+end
+
+function saveOutfits(self, filePath, outfits)
+	output = 'pants,shirt,tie,vest,blazer\n'
+	for i,o in ipairs(outfits) do
+		print(table.contains(self.delOutfits,i))
+		if not table.contains(self.delOutfits,i) then
+			output = output..o.pants..','..o.shirt..','..o.tie..','..o.vest..','..o.blazer..'\n'
+		end
+	end
+
+	file = io.open(filePath, 'w')
+	io.output(file)
+	io.write(output)
+	io.close(file)
+end
+
+-- returns a table of vec4 color values
+-- given input of hexstrings separated by #
+function getColors(colString)
+	colors = {}
+	
+	parts = split(colString, '#')
+	--print(parts)
+	for _,c in ipairs(parts) do
+
+		if c ~= '' then
+			r = tonumber('0x'..string.sub(c,1,2))/255.0
+			g = tonumber('0x'..string.sub(c,3,4))/255.0
+			b = tonumber('0x'..string.sub(c,5,-1))/255.0
+			table.insert(colors, vmath.vector4(r,g,b,1))
+		end
+	end
+	return colors
+end
+
+-- Finds the next / prev clothing item of the same type
+-- returns teh key in self.data.clothing
+function findNext(self, current, direction)
+	prev = nil
+	first = nil
+	type = self.data.clothing[current].type
+	for k,v in pairs(self.data.clothing) do
+		-- find previous
+		if direction == -1 then
+			-- if we've found the current, return the previous or wait to get the 
+			-- last (wrap around)
+			if k == current then
+				if prev ~= nil then
+					return prev
+				end
+			-- save if is the right type
+			elseif v.type == type then prev = k end
+		else
+			-- mark as return the next one if this is the current
+			if k == current then
+				prev = true
+			-- return if its the next one
+			elseif v.type == type and prev ~= nil then
+				return k
+			-- save first occurance of this type in case we nee to wrap around
+			elseif v.type == type and first == nil then
+				first = k
+			end
+		end
+	end
+	-- wrap around if we've gotten here
+	if direction == -1 then
+		return prev
+	else
+		return first
+	end
+end
+
+-- doesn't need to do anything right now
+function getpVars(string)
+	return ''
+end
+
+function split(pString, pPattern)
+	local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
+	local fpat = "(.-)" .. pPattern
+	local last_end = 1
+	local s, e, cap = pString:find(fpat, 1)
+	while s do
+		if s ~= 1 or cap ~= "" then
+			table.insert(Table,cap)
+		end
+		last_end = e+1
+		s, e, cap = pString:find(fpat, last_end)
+	end
+	if last_end <= #pString then
+		cap = pString:sub(last_end)
+		table.insert(Table, cap)
+	end
+	return Table
+end
+
+function table.contains(table, element)
+	for _, value in pairs(table) do
+		if value == element then
+			return true
+		end
+	end
+	return false
+end
+
+function final(self)
+	saveOutfits(self, self.opath, self.data.outfits)
+end
+
+function on_message(self, message_id, message, sender)
+	print("wardrobe got")
+	-- send an outfit to a requester
+	if message_id == hash('getOutfit') then
+		outfit = self.data.outfits[message.req]
+
+		for k,v in pairs(outfit) do
+			msg.post(sender, 'setClothing', self.data.clothing[v])
+		end
+		
+	-- send clothing details to a requester
+	elseif message_id == hash('getItem') then
+		msg.post(sender, 'setClothing', self.data.clothing[message.id])
+
+	-- send next clothing item to requester
+	-- message = { curID, direction	}
+	elseif message_id == hash('getNext') then
+		requested = findNext(self, message.curID, message.direction)
+		msg.post(sender, "setClothing", self.data.clothing[requested])
+
+	-- adds outfit to the wardrobe
+	elseif message_id == hash('addOutfit') then
+		self.data.outfits.insert(message)
+
+	-- marks an outfit for deletion
+	elseif message_id == hash('delOutfit') then
+		table.insert(self.delOutfits,message)
+	end
+end
+
+-- Goes through outfits, finds all that fit a certain condition and returns their indexes
+function searchOutfits(self, conditions)
+	found = {}
+
+	return found
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

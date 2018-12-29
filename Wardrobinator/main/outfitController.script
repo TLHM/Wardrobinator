@@ -1,0 +1,93 @@
+function init(self)
+	-- hide all clothes
+	msg.post('#Pants', 'disable')
+	msg.post('#Shirt', 'disable')
+	msg.post('#Tie', 'disable')
+	msg.post('#Vest', 'disable')
+	msg.post('#Blazer', 'disable')
+
+	-- Keep track of what we're showing now
+	self.currentOutfit = {
+		pants = 0,
+		shirt = 0,
+		tie = 0,
+		vest = 0,
+		blazer = 0
+	}
+
+	msg.post('/master#wardrobe', 'getOutfit', {req=1})
+end
+
+function on_message(self, message_id, message, sender)
+	
+	-- Setting colors in our clothing
+	if message_id == hash("setClothing") then
+		if message.type == 'pants' then
+			self.currentOutfit.pants = message.id
+			if message.id ~= 0 then
+				msg.post("#Pants", 'enable')
+				sprite.set_constant('#Pants', 'my_col', message.colors[1])
+			else
+				msg.post("#Pants", 'disable')
+			end
+		elseif message.type == 'shirt' then
+			self.currentOutfit.shirt = message.id
+			if message.id ~= 0 then
+				msg.post("#Shirt", 'enable')
+				sprite.set_constant('#Shirt', 'my_col', message.colors[1])
+			else
+				msg.post("#Shirt", 'disable')
+			end
+		elseif message.type == 'tie' then
+			self.currentOutfit.tie = message.id
+			if message.id ~= 0 then
+				msg.post("#Tie", 'enable')
+				sprite.set_constant('#Tie', 'my_col', message.colors[1])
+			else
+				msg.post("#Tie", 'disable')
+			end
+		elseif message.type == 'vest' then
+			self.currentOutfit.vest = message.id
+			if message.id ~= 0 then
+				msg.post("#Vest", 'enable')
+				sprite.set_constant('#Vest', 'my_col', message.colors[1])
+			else
+				msg.post("#Vest", 'disable')
+			end
+		elseif message.type == 'blazer' then
+			self.currentOutfit.blazer = message.id
+			if message.id ~= 0 then
+				msg.post("#Blazer", 'enable')
+				sprite.set_constant('#Blazer', 'my_col', message.colors[1])
+			else
+				msg.post("#Blazer", 'disable')
+			end
+		end
+	-- get next / prev item of clothing
+	elseif message_id == hash('nextItem') then
+		if message.type == 'pants' then
+			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.pants, direction=message.dir})
+		elseif message.type == 'shirt' then
+			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.shirt, direction=message.dir})
+		elseif message.type == 'tie' then
+			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.tie, direction=message.dir})
+		elseif message.type == 'vest' then
+			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.vest, direction=message.dir})
+		elseif message.type == 'blazer' then
+			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.blazer, direction=message.dir})
+		end
+	elseif message_id == hash('reset') then
+		-- hide all clothes
+		msg.post('#Pants', 'disable')
+		msg.post('#Shirt', 'disable')
+		msg.post('#Tie', 'disable')
+		msg.post('#Vest', 'disable')
+		msg.post('#Blazer', 'disable')
+
+		self.currentOutfit.pants = 0
+		self.currentOutfit.shirt = 0
+		self.currentOutfit.tie = 0
+		self.currentOutfit.vest = 0
+		self.currentOutfit.blazer = 0
+	end
+end
