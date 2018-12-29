@@ -1,0 +1,42 @@
+function init(self)
+	-- getting inputs
+	msg.post(".", "acquire_input_focus") 
+end
+
+function on_input(self, action_id, action)
+	-- Got a click!
+	if action_id == hash("click") and action.pressed then 
+		-- pants n/p
+		if gui.pick_node(gui.get_node("pants/nextB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='pants',direction=1})
+		elseif gui.pick_node(gui.get_node("pants/prevB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='pants',direction=-1})
+		-- shirt n/p
+		elseif gui.pick_node(gui.get_node("shirt/nextB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='shirt',direction=1})
+		elseif gui.pick_node(gui.get_node("shirt/prevB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='shirt',direction=-1})
+		-- tie n/p
+		elseif gui.pick_node(gui.get_node("tie/nextB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='tie',direction=1})
+		elseif gui.pick_node(gui.get_node("tie/prevB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='tie',direction=-1})
+		-- vest n/p
+		elseif gui.pick_node(gui.get_node("vest/nextB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='vest',direction=1})
+		elseif gui.pick_node(gui.get_node("vest/prevB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='vest',direction=-1})
+		-- blazer n/p
+		elseif gui.pick_node(gui.get_node("blazer/nextB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='blazer',direction=1})
+		elseif gui.pick_node(gui.get_node("blazer/prevB/button"), action.x, action.y) then 
+			msg.post('/outfit/visual#outfitController', 'nextItem',{type='blazer',direction=-1})
+		-- save
+		elseif gui.pick_node(gui.get_node("saveB/button"), action.x, action.y) then
+			msg.post('/outfit/visual#outfitController', 'saveOutfit')
+		-- delete
+		elseif gui.pick_node(gui.get_node("delB/button"), action.x, action.y) then
+			msg.post('', message_id)
+		end
+	end
+end

@@ -159,7 +159,7 @@ function final(self)
 end
 
 function on_message(self, message_id, message, sender)
-	print("wardrobe got")
+
 	-- send an outfit to a requester
 	if message_id == hash('getOutfit') then
 		outfit = self.data.outfits[message.req]
@@ -175,16 +175,19 @@ function on_message(self, message_id, message, sender)
 	-- send next clothing item to requester
 	-- message = { curID, direction	}
 	elseif message_id == hash('getNext') then
+		print(message.curID)
+		print(message.direction)
 		requested = findNext(self, message.curID, message.direction)
 		msg.post(sender, "setClothing", self.data.clothing[requested])
 
 	-- adds outfit to the wardrobe
 	elseif message_id == hash('addOutfit') then
 		self.data.outfits.insert(message)
+		msg.post(sender, 'setOutfitID',{outfitID=self.data.outfits.getn()})
 
 	-- marks an outfit for deletion
 	elseif message_id == hash('delOutfit') then
-		table.insert(self.delOutfits,message)
+		table.insert(self.delOutfits, message.outfitID)
 	end
 end
 

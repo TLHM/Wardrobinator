@@ -7,6 +7,7 @@ function init(self)
 	msg.post('#Blazer', 'disable')
 
 	-- Keep track of what we're showing now
+	self.curOutfitID=0
 	self.currentOutfit = {
 		pants = 0,
 		shirt = 0,
@@ -66,16 +67,18 @@ function on_message(self, message_id, message, sender)
 	-- get next / prev item of clothing
 	elseif message_id == hash('nextItem') then
 		if message.type == 'pants' then
-			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.pants, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.pants, direction=message.dir})
 		elseif message.type == 'shirt' then
-			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.shirt, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.shirt, direction=message.dir})
 		elseif message.type == 'tie' then
-			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.tie, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.tie, direction=message.dir})
 		elseif message.type == 'vest' then
-			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.vest, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.vest, direction=message.dir})
 		elseif message.type == 'blazer' then
-			msg.post('/master#wardrobe', 'getNext', {id=self.currentOutfit.blazer, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.blazer, direction=message.dir})
 		end
+		self.curOutfitID=0
+	-- reset the state of the visual
 	elseif message_id == hash('reset') then
 		-- hide all clothes
 		msg.post('#Pants', 'disable')
@@ -84,10 +87,27 @@ function on_message(self, message_id, message, sender)
 		msg.post('#Vest', 'disable')
 		msg.post('#Blazer', 'disable')
 
+		self.curOutfitID=0
 		self.currentOutfit.pants = 0
 		self.currentOutfit.shirt = 0
 		self.currentOutfit.tie = 0
 		self.currentOutfit.vest = 0
 		self.currentOutfit.blazer = 0
+	-- Save outfit if it's not just a previously loaded one
+	elseif message_id == hash('saveOutfit') then
+		if self.curOutfitID == 0 then
+			msg.post('/master#wardrobe', 'addOutfit', self.currentOutfit)
+		end
+	-- Delete outfit if it has an associated ID
+	elseif message_id == hash('delOutfit') then
+		if self.curOutfitID ~= 0 then
+			msg.post('/master#wardrobe', 'addOutfit',{outfitID=self.curOutfitID})
+		end
+	-- Set the outfit ID
+	elseif message_id == hash('setOutfitID') then
+		self.curOutfitID = message.outfitID
+	elseif message_id == hash('loadOutfit') then
+		self.curOutfitID = message.outfitID
+		msg.post('/master#wardrobe', 'getOutfit',{outfitID=self.curOutfitID})
 	end
 end
