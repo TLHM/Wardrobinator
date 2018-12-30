@@ -84,11 +84,10 @@ function getColors(colString)
 end
 
 -- Finds the next / prev clothing item of the same type
--- returns teh key in self.data.clothing
-function findNext(self, current, direction)
+-- returns the key in self.data.clothing
+function findNext(self, current, type, direction)
 	prev = nil
 	first = nil
-	type = self.data.clothing[current].type
 	for k,v in pairs(self.data.clothing) do
 		-- find previous
 		if direction == -1 then
@@ -115,9 +114,17 @@ function findNext(self, current, direction)
 	end
 	-- wrap around if we've gotten here
 	if direction == -1 then
-		return prev
+		if current == 0 or type == 'pants' or type == 'shirt' then
+			return prev
+		else
+			return 0
+		end
 	else
-		return first
+		if current == 0 or type == 'pants' or type == 'shirt' then
+			return first
+		else
+			return 0
+		end
 	end
 end
 
@@ -177,8 +184,13 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash('getNext') then
 		print(message.curID)
 		print(message.direction)
-		requested = findNext(self, message.curID, message.direction)
-		msg.post(sender, "setClothing", self.data.clothing[requested])
+		requested = findNext(self, message.curID, message.type, message.direction)
+		
+		if requested == 0 then
+			msg.post(sender, "setClothing", {type=message.type, id=0})
+		else
+			msg.post(sender, "setClothing", self.data.clothing[requested])
+		end
 
 	-- adds outfit to the wardrobe
 	elseif message_id == hash('addOutfit') then

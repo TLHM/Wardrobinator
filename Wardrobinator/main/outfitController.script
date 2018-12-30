@@ -67,15 +67,15 @@ function on_message(self, message_id, message, sender)
 	-- get next / prev item of clothing
 	elseif message_id == hash('nextItem') then
 		if message.type == 'pants' then
-			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.pants, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.pants, direction=message.dir, type=message.type})
 		elseif message.type == 'shirt' then
-			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.shirt, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.shirt, direction=message.dir, type=message.type})
 		elseif message.type == 'tie' then
-			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.tie, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.tie, direction=message.dir, type=message.type})
 		elseif message.type == 'vest' then
-			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.vest, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.vest, direction=message.dir, type=message.type})
 		elseif message.type == 'blazer' then
-			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.blazer, direction=message.dir})
+			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.blazer, direction=message.dir, type=message.type})
 		end
 		self.curOutfitID=0
 	-- reset the state of the visual
