@@ -14,14 +14,14 @@ function init(self)
 		vest = 0,
 		blazer = 0
 	}
-
-	msg.post(".", "acquire_input_focus")
+	self.curID = 0
 end
 
 function on_message(self, message_id, message, sender)
 
 	-- Setting colors in our clothing
 	if message_id == hash("setClothing") then
+		--print('setting '..message.type)
 		if message.type == 'pants' then
 			self.currentOutfit.pants = message.id
 			if message.id ~= 0 then

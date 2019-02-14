@@ -1,20 +1,20 @@
 images {
-  image: "/assets/images/doll_person.png"
+  image: "/assets/images/dollv_person.png"
 }
 images {
-  image: "/assets/images/doll_blazer.png"
+  image: "/assets/images/dollv_blazer.png"
 }
 images {
-  image: "/assets/images/doll_pants.png"
+  image: "/assets/images/dollv_pants.png"
 }
 images {
-  image: "/assets/images/doll_shirt.png"
+  image: "/assets/images/dollv_shirt.png"
 }
 images {
-  image: "/assets/images/doll_tie.png"
+  image: "/assets/images/dollv_tie.png"
 }
 images {
-  image: "/assets/images/doll_vest.png"
+  image: "/assets/images/dollv_vest.png"
 }
 margin: 0
 extrude_borders: 0

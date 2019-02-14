@@ -1,11 +1,41 @@
 function init(self)
 	-- make our grid using a factory!
+	self.grid = {}
+	self.page = 1
+	self.numpages = 1
+	self.ids = {}
+	self.curOutfits = {}
 	
+	for j = 1,3 do
+		for i = 1,4 do
+			id = 10*i+j
+			table.insert(self.ids, id)
+			pos = vmath.vector3(670+(i-1)*165,630-(j-1)*200,0)
+			self.grid[id] = collectionfactory.create('/grid#miniOutFactory', pos, nil, {})
+			print(self.grid[id])
+			msg.post(self.grid[id][hash('/visual#outfitController')], 'set_parent', { keep_world_transform = 0 })
+		end
+	end
+
+	msg.post(".", "acquire_input_focus")
+end
+
+-- Hit test on grid boxes, manual because wtf??
+function hitTest(id, x, y)
+	j = math.ceil(id/4)
+	i = (id-1)%4
+	bx = 670+(i)*165
+	by = 630-(j-1)*200
+
+	if math.abs(x-bx) < 75 and math.abs(y-by) < 95 then
+		--print('Hittest: '..id)
+		return true
+	end
+	return false
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Remove this function if not needed
+	
 end
 
 function update(self, dt)
@@ -14,13 +44,56 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Remove this function if not needed
+	-- load this dictionary of outfits in the grid
+	if message_id == hash('loadOutfits') then
+		os = message.outfits
+		self.curOutfits = os
+
+		-- Make sure we have at least one outfit on this page, or we are on the first page
+		len = table.getn(os)
+		if self.page > 1 and math.ceil(len/12) < self.page then
+			self.page = self.page - 1
+		end
+
+		-- loop through the grid boxes, set them to an outfit (or reset them)
+		startID = (self.page-1)*12
+		for i,id in pairs(self.ids) do
+			tar = msg.url('main', self.grid[id][hash('/visual')], 'control')
+			if startID + i <= len then
+				--print(tar)
+				msg.post('/master#wardrobe', 'getOutfit', {req=startID+i,target=tar})
+			else
+				msg.post(tar, 'reset')
+			end
+		end
+	elseif message_id == hash('nextPage') then
+		if message.dir == 1 then
+			if math.ceil(table.getn(self.curOutfits)/12) > self.page then
+				self.page = self.page + 1
+				msg.post('.', 'loadOutfits', {outfits=self.curOutfits})
+			end
+		elseif self.page > 1 then
+			self.page = self.page - 1
+			msg.post('.', 'loadOutfits', {outfits=self.curOutfits})
+		end
+	end
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here
-	-- Remove this function if not needed
+	-- Got a click!
+	if action_id == hash("click") and action.pressed then 
+		-- Figure out which grid button was clicked
+		for i = 1,12 do
+			if hitTest(i, action.x, action.y) then
+				ind = (self.page-1)*12 + i
+				if ind <= table.getn(self.curOutfits) then
+					print('loading outfit '..ind)
+					msg.post('/master#wardrobe', 'getOutfit', {req=ind, target='/outfit/visual#outfitController'})
+				end
+				break
+			end
+		end
+	end
 end
 
 function on_reload(self)
