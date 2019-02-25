@@ -16,16 +16,20 @@ end
 
 function loadClothes(filePath)
 	toReturn = {}
+	
 	for line in io.lines(filePath) do 
-		parts = split(line, ',')
+		local parts = split(line, ',')
 
 		if parts[1]~='id' then
+			--print(parts[5])
+			pv = getpVars(parts[5])
+			cols = getColors(parts[4])
 			toReturn[tonumber(parts[1])] = {
 				id = tonumber(parts[1]),
 				type = parts[2],
 				pattern = parts[3],
-				colors = getColors(parts[4]),
-				patternVars = getpVars(parts[5]),
+				colors = cols,
+				patternVars = pv,
 				owned = parts[6]
 			}
 		end
@@ -37,7 +41,7 @@ end
 function loadOutfits(filePath)
 	toReturn = {}
 	for line in io.lines(filePath) do 
-		parts = split(line, ',')
+		local parts = split(line, ',')
 		if parts[1]~='pants' then
 			table.insert(toReturn,{
 				pants = tonumber(parts[1]),
@@ -70,9 +74,10 @@ end
 -- returns a table of vec4 color values
 -- given input of hexstrings separated by #
 function getColors(colString)
+	--print(colString)
 	colors = {}
 	
-	parts = split(colString, '#')
+	local parts = split(colString, '#')
 	--print(parts)
 	for _,c in ipairs(parts) do
 
@@ -132,8 +137,14 @@ function findNext(self, current, type, direction)
 end
 
 -- doesn't need to do anything right now
-function getpVars(string)
-	return ''
+function getpVars(pv)
+	local parts = split(pv, ';')
+	-- vS vector for stripes
+	local vS = vmath.vector4(tonumber(parts[1]),tonumber(parts[2]),tonumber(parts[5]),tonumber(parts[6]))
+	--vS vector for dots
+	local vD = vmath.vector4(tonumber(parts[3]),tonumber(parts[4]),0,0)
+	
+	return {vS, vD}
 end
 
 function split(pString, pPattern)
@@ -173,7 +184,8 @@ function on_message(self, message_id, message, sender)
 	-- send an outfit to a requester
 	if message_id == hash('getOutfit') then
 		print('get out '..message.req)
-		outfit = self.data.outfits[message.req]
+		local outfit = self.data.outfits[message.req]
+		
 		t = sender
 		if message.target ~= 'sender' then
 			t=message.target

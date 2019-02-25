@@ -29,6 +29,10 @@ function on_message(self, message_id, message, sender)
 			if message.id ~= 0 then
 				msg.post("#Pants", 'enable')
 				sprite.set_constant('#Pants', 'my_col', message.colors[1])
+				sprite.set_constant('#Pants', 'my_col2', message.colors[2])
+				
+				sprite.set_constant('#Pants', 'stripeVars', message.patternVars[1])
+				sprite.set_constant('#Pants', 'dotVars', message.patternVars[2])
 			else
 				msg.post("#Pants", 'disable')
 			end
@@ -37,6 +41,10 @@ function on_message(self, message_id, message, sender)
 			if message.id ~= 0 then
 				msg.post("#Shirt", 'enable')
 				sprite.set_constant('#Shirt', 'my_col', message.colors[1])
+				sprite.set_constant('#Shirt', 'my_col2', message.colors[2])
+
+				sprite.set_constant('#Shirt', 'stripeVars', message.patternVars[1])
+				sprite.set_constant('#Shirt', 'dotVars', message.patternVars[2])
 			else
 				msg.post("#Shirt", 'disable')
 			end
@@ -45,6 +53,10 @@ function on_message(self, message_id, message, sender)
 			if message.id ~= 0 then
 				msg.post("#Tie", 'enable')
 				sprite.set_constant('#Tie', 'my_col', message.colors[1])
+				sprite.set_constant('#Tie', 'my_col2', message.colors[2])
+
+				sprite.set_constant('#Tie', 'stripeVars', message.patternVars[1])
+				sprite.set_constant('#Tie', 'dotVars', message.patternVars[2])
 			else
 				msg.post("#Tie", 'disable')
 			end
@@ -53,6 +65,10 @@ function on_message(self, message_id, message, sender)
 			if message.id ~= 0 then
 				msg.post("#Vest", 'enable')
 				sprite.set_constant('#Vest', 'my_col', message.colors[1])
+				sprite.set_constant('#Vest', 'my_col2', message.colors[2])
+
+				sprite.set_constant('#Vest', 'stripeVars', message.patternVars[1])
+				sprite.set_constant('#Vest', 'dotVars', message.patternVars[2])
 			else
 				msg.post("#Vest", 'disable')
 			end
@@ -61,6 +77,10 @@ function on_message(self, message_id, message, sender)
 			if message.id ~= 0 then
 				msg.post("#Blazer", 'enable')
 				sprite.set_constant('#Blazer', 'my_col', message.colors[1])
+				sprite.set_constant('#Blazer', 'my_col2', message.colors[2])
+
+				sprite.set_constant('#Blazer', 'stripeVars', message.patternVars[1])
+				sprite.set_constant('#Blazer', 'dotVars', message.patternVars[2])
 			else
 				msg.post("#Blazer", 'disable')
 			end

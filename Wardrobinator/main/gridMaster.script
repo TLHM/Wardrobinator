@@ -12,7 +12,7 @@ function init(self)
 			table.insert(self.ids, id)
 			pos = vmath.vector3(670+(i-1)*165,630-(j-1)*200,0)
 			self.grid[id] = collectionfactory.create('/grid#miniOutFactory', pos, nil, {})
-			print(self.grid[id])
+			--print(self.grid[id])
 			msg.post(self.grid[id][hash('/visual#outfitController')], 'set_parent', { keep_world_transform = 0 })
 		end
 	end
