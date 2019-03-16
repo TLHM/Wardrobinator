@@ -11,7 +11,7 @@ function init(self)
 	self.delOutfits = {}
 
 	msg.post('@render:', 'clear_color', { color = vmath.vector4(.96, .9555, .9216, 1) } )
-	msg.post('/grid#gridMaster', 'loadOutfits', {outfits=self.data.outfits})
+	msg.post('/grid#gridMaster', 'loadOutfits', {numOutfits=table.getn(self.data.outfits)})
 end
 
 function loadClothes(filePath)
@@ -192,8 +192,13 @@ function on_message(self, message_id, message, sender)
 		end
 		
 		for k,v in pairs(outfit) do
-			msg.post(t, 'setClothing', self.data.clothing[v])
+			if v==0 then
+				msg.post(t, 'setClothing', {id=0, type=k})
+			else
+				msg.post(t, 'setClothing', self.data.clothing[v])
+			end
 		end
+		msg.post(t, 'setOutfitID', {outfitID=message.req})
 		
 	-- send clothing details to a requester
 	elseif message_id == hash('getItem') then
@@ -215,13 +220,13 @@ function on_message(self, message_id, message, sender)
 	-- adds outfit to the wardrobe
 	elseif message_id == hash('addOutfit') then
 		table.insert(self.data.outfits, message)
-		msg.post('/grid#gridMaster', 'loadOutfits', {outfits=self.data.outfits})
+		msg.post('/grid#gridMaster', 'loadOutfits', {numOutfits=table.getn(self.data.outfits)})
 		msg.post(sender, 'setOutfitID',{outfitID=self.data.outfits.getn()})
 
 	-- marks an outfit for deletion
 	elseif message_id == hash('delOutfit') then
-		table.insert(self.delOutfits, message.outfitID)
-		msg.post('/grid#gridMaster', 'loadOutfits', {outfits=self.data.outfits})
+		table.remove(self.data.outfits, message.outfitID)
+		msg.post('/grid#gridMaster', 'loadOutfits', {numOutfits=table.getn(self.data.outfits)})
 	end
 end
 

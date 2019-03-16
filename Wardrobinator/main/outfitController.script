@@ -98,6 +98,7 @@ function on_message(self, message_id, message, sender)
 		elseif message.type == 'blazer' then
 			msg.post('/master#wardrobe', 'getNext', {curID=self.currentOutfit.blazer, direction=message.dir, type=message.type})
 		end
+		--print('np item')
 		self.curOutfitID=0
 	-- reset the state of the visual
 	elseif message_id == hash('reset') then
@@ -121,14 +122,17 @@ function on_message(self, message_id, message, sender)
 		end
 	-- Delete outfit if it has an associated ID
 	elseif message_id == hash('delOutfit') then
+		print('CurOut '..self.curOutfitID)
 		if self.curOutfitID ~= 0 then
-			msg.post('/master#wardrobe', 'addOutfit',{outfitID=self.curOutfitID})
+			msg.post('/master#wardrobe', 'delOutfit',{outfitID=self.curOutfitID})
 		end
 	-- Set the outfit ID
 	elseif message_id == hash('setOutfitID') then
 		self.curOutfitID = message.outfitID
+		print('set outID '..self.curOutfitID)
 	elseif message_id == hash('loadOutfit') then
 		self.curOutfitID = message.outfitID
 		msg.post('/master#wardrobe', 'getOutfit',{outfitID=self.curOutfitID})
+		--print('loaded out '..self.curOutfitID)
 	end
 end

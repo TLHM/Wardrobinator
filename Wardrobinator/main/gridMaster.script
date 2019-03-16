@@ -46,11 +46,12 @@ end
 function on_message(self, message_id, message, sender)
 	-- load this dictionary of outfits in the grid
 	if message_id == hash('loadOutfits') then
-		os = message.outfits
-		self.curOutfits = os
+		--os = message.outfits
+		--self.curOutfits = os
 
 		-- Make sure we have at least one outfit on this page, or we are on the first page
-		len = table.getn(os)
+		len = message.numOutfits
+		self.outCount = len
 		if self.page > 1 and math.ceil(len/12) < self.page then
 			self.page = self.page - 1
 		end
@@ -68,13 +69,15 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash('nextPage') then
 		if message.dir == 1 then
-			if math.ceil(table.getn(self.curOutfits)/12) > self.page then
+			if math.ceil(len/12) > self.page then
 				self.page = self.page + 1
-				msg.post('.', 'loadOutfits', {outfits=self.curOutfits})
+				msg.post('/gui#mainVisButtons', 'pageTxt',{pg=self.page})
+				msg.post('.', 'loadOutfits', {numOutfits=len})
 			end
 		elseif self.page > 1 then
 			self.page = self.page - 1
-			msg.post('.', 'loadOutfits', {outfits=self.curOutfits})
+			msg.post('/gui#mainVisButtons', 'pageTxt',{pg=self.page})
+			msg.post('.', 'loadOutfits', {numOutfits=len})
 		end
 	end
 end
@@ -86,7 +89,7 @@ function on_input(self, action_id, action)
 		for i = 1,12 do
 			if hitTest(i, action.x, action.y) then
 				ind = (self.page-1)*12 + i
-				if ind <= table.getn(self.curOutfits) then
+				if ind <= self.outCount then
 					print('loading outfit '..ind)
 					msg.post('/master#wardrobe', 'getOutfit', {req=ind, target='/outfit/visual#outfitController'})
 				end

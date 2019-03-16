@@ -50,3 +50,9 @@ id, type, pattern, colors,patternVars,owned
 49,tie,striped,#4E75A3#EBEEF2,10;.05;0;0;0;0,1
 50,tie,striped,#2641A3#201E1C,0;0;0;0;2;0.2,1
 51,tie,spotted,#62ABD9#826556,0;0;15;.2;0;0,1
+52,shirt,solid,#D1BEED#FFFFFF,0;0;0;0;0;0,0
+53,shirt,solid,#FFFCA3#FFFFFF,0;0;0;0;0;0,0
+54,shirt,solid,#DFFFAB#FFFFFF,0;0;0;0;0;0,0
+55,pants,solid,#967A51#FFFFFF,0;0;0;0;0;0,0
+56,pants,solid,#4262AD#FFFFFF,0;0;0;0;0;0,0
+57,vest,solid,#8F6B42#FFFFFF,0;0;0;0;0;0,0
